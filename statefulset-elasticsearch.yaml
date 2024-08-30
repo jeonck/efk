@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: efk  # 네임스페이스 유지
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      securityContext:
+        runAsUser: 1000  # elasticsearch 사용자의 UID
+        runAsGroup: 1000  # elasticsearch 그룹의 GID
+        fsGroup: 1000  # Elasticsearch가 데이터를 쓸 수 있는 그룹 권한 설정
+      containers:
+      - name: elasticsearch
+        image: elastic/elasticsearch:7.17.7
+        env:
+        - name: discovery.type
+          value: single-node
+        - name: ELASTIC_PASSWORD
+          value: "elasticstack"
+        - name: xpack.security.enabled
+          value: "false"  # 보안 기능 비활성화
+        - name: xpack.security.transport.ssl.enabled
+          value: "false"  # 노드 간 SSL 비활성화
+        - name: xpack.security.http.ssl.enabled
+          value: "false"  # HTTP SSL 비활성화
+        - name: ES_JAVA_OPTS
+          value: "-Xms500m -Xmx1000m"
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        volumeMounts:
+        - name: elastic-data
+          mountPath: /usr/share/elasticsearch/data
+      volumes:
+      - name: elastic-data
+        persistentVolumeClaim:
+          claimName: elasticsearch-pvc  # PVC 이름으로 설정

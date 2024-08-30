@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-kibana  # Ingress 이름을 Kibana에 맞게 변경
+  namespace: efk  # 네임스페이스를 efk로 설정
+  annotations:
+    # nginx.ingress.kubernetes.io/proxy-body-size: "1G"  # client_max_body_size 설정
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: kibanaㅇㅇㅇ  # Kibana에 맞는 호스트로 변경
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kibana  # Kibana 서비스 이름으로 변경
+            port:
+              number: 5601  # Kibana의 기본 포트로 변경
+  tls:
+  - hosts:
+    - kibanaㅇㅇㅇ  # 호스트 이름을 Kibana에 맞게 유지
+    secretName: tls-kibana  # Kibana에 맞는 TLS 시크릿 이름으로 변경

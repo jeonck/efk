@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pvc  # PVC 이름을 Elasticsearch에 맞게 변경
+  namespace: efk  # 네임스페이스를 efk로 변경
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi  # 스토리지 클래스 유지
+  resources:
+    requests:
+      storage: 30Gi  # Elasticsearch에 맞게 스토리지 용량을 조정 (예시로 20Gi로 설정)

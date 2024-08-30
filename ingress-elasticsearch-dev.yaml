@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-elasticsearch
+  namespace: efk  # 네임스페이스를 efk로 변경
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1G"  # client_max_body_size 설정
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: es-ㅇㅇㅇ  # Elasticsearch에 맞는 호스트로 변경
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: elasticsearch-master  # Elasticsearch 서비스 이름으로 변경
+            port:
+              number: 9200  # Elasticsearch의 기본 포트로 변경
+  tls:
+  - hosts:
+    - esㅇㅇㅇ  # 호스트 이름 변경
+    secretName: tls-elasticsearch  # Elasticsearch에 맞는 TLS 시크릿 이름으로 변경

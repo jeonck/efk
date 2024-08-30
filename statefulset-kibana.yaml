@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kibana
+  namespace: efk  # 네임스페이스를 efk로 설정
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: elastic/kibana:7.17.7
+        env:
+        - name: ELASTICSEARCH_HOSTS
+          value: "http://elasticsearch-master:9200"
+        - name: discovery.type
+          value: single-node
+        - name: ELASTICSEARCH_USERNAME
+          value: "elastic"
+        - name: ELASTICSEARCH_PASSWORD
+          value: "elasticstack"
+        ports:
+        - containerPort: 5601
